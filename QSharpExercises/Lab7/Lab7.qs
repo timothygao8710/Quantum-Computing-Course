@@ -91,8 +91,21 @@ namespace Lab7 {
         op : ((Qubit[], Qubit[]) => Unit),
         input : Bool[]
     ) : Bool[] {
-        // TODO
-        fail "Not implemented.";
+        
+        use register = Qubit[Length(input)];
+        use zeroes = Qubit[Length(input)];
+        for i in 0..Length(input)-1{
+            if(input[i]){
+                X(register[i]);
+            }
+        }
+        op(register, zeroes);
+        mutable res = new Bool[0];
+        for i in 0..Length(input)-1{
+            set res += [ResultAsBool(M(zeroes[i]))];
+        }
+        ResetAll(register);
+        return res;
     }
 
 
@@ -120,8 +133,20 @@ namespace Lab7 {
         op : ((Qubit[], Qubit[]) => Unit),
         inputSize : Int
     ) : Bool[] {
-        // TODO
-        fail "Not implemented.";
+
+        use input = Qubit[inputSize];
+        use output = Qubit[inputSize];
+        
+        ApplyToEach(H, input);
+        op(input, output);
+        ApplyToEach(H, input);
+
+        mutable res = new Bool[0];
+        for i in 0..Length(input)-1{
+            set res += [ResultAsBool(M(input[i]))];
+        }
+        ResetAll(output);
+        return res;
     }
 
 
@@ -158,8 +183,11 @@ namespace Lab7 {
     /// a three-qubit register, it would be |100>. If the unit tests provide
     /// that result, then you've implemented it properly.
     operation Challenge1 (input : Qubit[], output : Qubit[]) : Unit {
-        // TODO
-        fail "Not implemented.";
+        for inputIndex in 0 .. Length(input) - 2 {
+            // Copy input[i] to output[i-1]
+            let outputIndex = inputIndex + 1;
+            CNOT(input[inputIndex], output[outputIndex]);
+        }
     }
 
 
@@ -175,6 +203,7 @@ namespace Lab7 {
     ///   001  |  010
     ///   010  |  000
     ///   011  |  110
+
     ///   100  |  000
     ///   101  |  110
     ///   110  |  101
@@ -193,8 +222,10 @@ namespace Lab7 {
     /// Here's a hint: you can do it by only using the X gate, and controlled
     /// variants of the X gate (CNOT and CCNOT).
     operation Challenge2 (input : Qubit[], output : Qubit[]) : Unit {
-        // TODO
-        fail "Not implemented.";
+        X(input[2]);
+        Controlled X(input[2..2], output[1]);
+
+        X(input[2]);
     }
 
 }

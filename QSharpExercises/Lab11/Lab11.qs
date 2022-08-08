@@ -29,8 +29,18 @@ namespace QSharpExercises.Lab11 {
     /// to the original qubit. All of them are in the |0> state.
     operation Exercise1 (original : Qubit, spares : Qubit[]) : Unit
     is Adj {
-        // TODO
-        fail "Not implemented.";
+        H(spares[3]); H(spares[4]); H(spares[5]);
+        CNOT(original, spares[1]);
+        CNOT(original, spares[0]);
+        CNOT(spares[5], spares[0]);
+        CNOT(spares[5],  spares[2]);
+        CNOT(spares[5], original);
+        CNOT(spares[4], spares[1]);
+        CNOT(spares[4], spares[2]);
+        CNOT(spares[4], original);
+        CNOT(spares[3], spares[0]);
+        CNOT(spares[3], spares[1]);
+        CNOT(spares[3], spares[2]);
     }
 
 
@@ -51,8 +61,22 @@ namespace QSharpExercises.Lab11 {
     /// An array of the 3 syndrome measurement results that the Steane code
     /// produces.
     operation Exercise2 (register : Qubit[]) : Result[] {
-        // TODO
-        fail "Not implemented.";
+        // Message("BRO WHAT EXERCISE 2");
+        let len = Length(register);
+        use qs = Qubit[3];
+        for i in 0..len-1{
+            for j in 0..2{
+                if (((i+1)>>>j)%2 == 0){
+                    Message($"{i} {j}");
+                    Controlled X(register[i..i], qs[2-j]);
+                }
+            }
+        }
+        mutable res = [];
+        for j in 0..2{
+            set res += [M(qs[2-j])];
+        }
+        return MultiM(qs);
     }
 
 
@@ -73,8 +97,19 @@ namespace QSharpExercises.Lab11 {
     /// An array of the 3 syndrome measurement results that the Steane code
     /// produces.
     operation Exercise3 (register : Qubit[]) : Result[] {
-        // TODO
-        fail "Not implemented.";
+        use qs = Qubit[3];
+        ApplyToEach(H, qs);
+        for i in 0..Length(register)-1{
+            for j in 0..2{
+                if (((i+1)>>>j)%2 == 0){
+                    Message($"{i} {j}");
+                    Controlled H(register[i..i], qs[j]);
+                }
+            }
+        }
+        mutable res = MultiM(qs);
+        ApplyToEach(H, qs);
+        return res;
     }
 
 
@@ -114,8 +149,16 @@ namespace QSharpExercises.Lab11 {
     /// classical method. It doesn't have any quantum parts to it, just lots
     /// of regular old classical math and logic.
     function Exercise4 (syndrome : Result[]) : Int {
-        // TODO
-        fail "Not implemented.";
+        let syndrome0 = (syndrome[0] == One ? 1 | 0);
+        let syndrome1 = (syndrome[1] == One ? 1 | 0);
+        let syndrome2 = (syndrome[2] == One ? 1 | 0);
+        
+        mutable brokenIndex = 0;
+        set brokenIndex = brokenIndex ||| syndrome2;
+        set brokenIndex = brokenIndex ||| (syndrome1 <<< 1);
+        set brokenIndex = brokenIndex ||| (syndrome0 <<< 2);
+
+        return brokenIndex - 1;
     }
 
 
@@ -141,7 +184,17 @@ namespace QSharpExercises.Lab11 {
     /// bunch of different original qubit states. Don't worry if it doesn't
     /// immediately finish!
     operation Exercise5 (register : Qubit[]) : Unit {
-        // TODO
-        fail "Not implemented.";
+        let bitFlipSyndrome = Exercise2(register);
+        let phaseFlipSyndrome = Exercise3(register);
+
+        let bitFlipIndex = Exercise4(bitFlipSyndrome);
+        if (bitFlipIndex >= 0) {
+            X(register[bitFlipIndex]);
+        }
+
+        let phaseFlipIndex = Exercise4(phaseFlipSyndrome);
+        if (phaseFlipIndex >= 0) {
+            Z(register[phaseFlipIndex]);
+        }
     }
 }

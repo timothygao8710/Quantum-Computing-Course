@@ -54,22 +54,22 @@ namespace Tests.Lab11 {
 
                 if ((brokenIndex + 1) &&& 0b100) == 0b100 {
                     EqualityFactR(
-                        One,
                         syndrome[0],
+                        One,
                         "Bit-flip syndrome measurment 0 is incorrect"
                     );
                 }
                 if ((brokenIndex + 1) &&& 0b010) == 0b010 {
                     EqualityFactR(
-                        One,
                         syndrome[1],
+                        One,
                         "Bit-flip syndrome measurement 1 is incorrect"
                     );
                 }
                 if ((brokenIndex + 1) &&& 0b001) == 0b001 {
                     EqualityFactR(
-                        One,
                         syndrome[2],
+                        One,
                         "Bit-flip syndrome measurement 2 is incorrect"
                     );
                 }
@@ -99,22 +99,22 @@ namespace Tests.Lab11 {
 
                 if ((brokenIndex + 1) &&& 0b100) == 0b100 {
                     EqualityFactR(
-                        One,
                         syndrome[0],
+                        One,
                         "Phase-flip syndrome measurment 0 is incorrect"
                     );
                 }
                 if ((brokenIndex + 1) &&& 0b010) == 0b010 {
                     EqualityFactR(
-                        One,
                         syndrome[1],
+                        One,
                         "Phase-flip syndrome measurement 1 is incorrect"
                     );
                 }
                 if ((brokenIndex + 1) &&& 0b001) == 0b001 {
                     EqualityFactR(
-                        One,
                         syndrome[2],
+                        One,
                         "Phase-flip syndrome measurement 2 is incorrect"
                     );
                 }
@@ -134,8 +134,8 @@ namespace Tests.Lab11 {
                 ((brokenIndex + 1) &&& 0b001) == 0b001 ? One | Zero
             ];
             EqualityFactI(
-                brokenIndex,
                 Exercise4(syndrome),
+                brokenIndex,
                 $"Incorrect broken index for syndrome {syndrome}"
             );
         }

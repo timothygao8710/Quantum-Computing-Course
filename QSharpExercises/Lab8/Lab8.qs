@@ -22,14 +22,29 @@ namespace Lab8 {
     /// A register containing qubits in superposition.
     /// The superposition is unknown, and the amplitudes are not guaranteed to
     /// be uniform.
+
+    operation Reverse (register : BigEndian) : Unit is Adj + Ctl {
+        for i in 0..Length(register!)/2-1 {
+            SWAP(register![i], register![Length(register!)-1-i]);
+        }
+    }
+
     operation Exercise1 (register : BigEndian) : Unit is Adj + Ctl {
         // Hint: there are two functions you may want to use here:
         // the first is your implementation of register reversal in Lab 2,
         // Exercise 2.
         // The second is the Microsoft.Quantum.Intrinsic.R1Frac() gate.
+        let len = Length(register!);
+        
+        for i in 0..len-1{
+            H(register![i]);
+            for j in i+1 .. len-1{
+                let a = j - i + 1;
+                Controlled R1Frac(register![j..j], (2, a, register![i]));
+            }
+        }
 
-        // TODO
-        fail "Not implemented.";
+        Reverse(register);
     }
 
 
@@ -61,8 +76,28 @@ namespace Lab8 {
         register : BigEndian,
         sampleRate : Double
     ) : Double {
-        // TODO
-        fail "Not implemented.";
+
+        Adjoint Exercise1(register);
+
+        let len = Length(register!);
+        mutable res = 0.0;
+        mutable samples = 1.0;
+
+        for i in 0..len-1{
+            mutable num = 0.0;
+            set samples = samples * 2.0;
+            if(M(register![i]) == One){
+                set num = 1.0;
+            }
+            set res = (2.0 * res) + num;
+        }
+
+        if (res > samples / 2.0){
+            set res = samples  - res;
+        }
+
+        let freq = res * sampleRate / samples;
+        return freq;
     }
 
 }

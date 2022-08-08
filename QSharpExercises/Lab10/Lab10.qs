@@ -32,8 +32,8 @@ namespace Lab10 {
         // this operation, so it can just be run backwards to decode the
         // logical qubit back into the original three unentangled qubits.
 
-        // TODO
-        fail "Not implemented.";
+        CNOT(original, spares[0]);
+        CNOT(original, spares[1]);
     }
 
 
@@ -65,8 +65,19 @@ namespace Lab10 {
         // makes things easier. Don't forget to reset the qubits you allocate
         // back to the |0> state!
 
-        // TODO
-        fail "Not implemented.";
+        
+        mutable res = new Result[0];
+        use anc = Qubit();
+
+        CNOT(register[0], anc);
+        CNOT(register[1], anc);
+        set res += [M(anc)];
+        Reset(anc);
+        CNOT(register[0], anc);
+        CNOT(register[2], anc);
+        set res += [M(anc)];
+        Reset(anc);
+        return res;
     }
 
 
@@ -98,7 +109,14 @@ namespace Lab10 {
         // out to the console. You might want to consider printing the index
         // of the qubit you identified as broken to help with debugging.
 
-        // TODO
-        fail "Not implemented.";
+        //take the majority
+
+        if (syndromeMeasurement[1] == One and syndromeMeasurement[0] == One){
+            X(register[0]);
+        } elif  (syndromeMeasurement[0] == One) {
+            X(register[1]);
+        } elif (syndromeMeasurement[1] == One) {
+            X(register[2]);
+        }
     }
 }

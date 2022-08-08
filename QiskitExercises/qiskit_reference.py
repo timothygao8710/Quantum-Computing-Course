@@ -151,9 +151,12 @@ def run_example_on_hardware(example):
 
 
 # Code runner - change the method below to run a different example
+#If this is a part of a larger module you might not have -- it's just telling you to run
+#if this script is being executed as a top-level script
+
 if __name__ == '__main__':
     # Uncomment this line to run a circuit locally on a simulator
-    run_example_on_simulator(example_1)
+    run_example_on_simulator(example_2)
 
     # Uncomment this line to run a circuit on a real quantum machine
     #run_example_on_hardware(example_1)

@@ -5,6 +5,7 @@ from qiskit.providers.aer import AerSimulator
 from qiskit import IBMQ
 from qiskit.compiler import transpile
 from time import perf_counter
+from qiskit.test.mock import FakeMontreal
 
 # Initialization
 qubits = QuantumRegister(3)
@@ -59,13 +60,10 @@ print(f"Gate counts: {circuit.count_ops()}")
 
 # Simulate a run on Santiago, using its real gate information to model the output with real errors
 santiago_sim = AerSimulator.from_backend(backend)
+# montreal_backend = FakeMontreal()
+
 result = santiago_sim.run(circuit).result()
 counts = result.get_counts(circuit)
 for(measured_state, count) in counts.items():
     big_endian_state = measured_state[::-1]
     print(f"Measured {big_endian_state} {count} times.")
-
-from qiskit.test.mock import FakeMontreal
-montreal_backend = FakeMontreal()
-
-# Feel free to put other circuit experiments using this backend here and play around!

@@ -10,16 +10,12 @@ namespace Lab3 {
 //010
 //111
     operation FlipPhase (arr : Int[], register : Qubit[]) : Unit{
-        // use anc = Qubit();
-        // X(anc);
-
         for i in 0..Length(arr)-1{
             if(arr[i] == 0){
                 X(register[i]);
             }
         }
 
-        // Controlled Z(register[0..Length(arr)-1], anc);
         Controlled Z(register[0..Length(arr)-2], register[Length(arr)-1]);
 
         for i in 0..Length(arr)-1{
@@ -27,8 +23,6 @@ namespace Lab3 {
                 X(register[i]);
             }
         }
-
-        // Reset(anc);
     }
 
     operation ApplyH (arr : Int[], register : Qubit[], idx : Int) : Unit{
@@ -465,19 +459,17 @@ namespace Lab3 {
     /// 
      ///  Index  |  powers of 1/sqrt(2)
     /// ------- | -------
-    ///    0    |    2
-    ///    1    |   3
-    ///    2    |    0
-    ///    3    |   3
-    ///    4    |    2
-    ///    5    |  3
-    ///    6    |   0
-    ///    7    |  3
+    ///    0 (000)   |    2
+    ///    1 (001)  |   3
+    ///    2 (010)   |    0
+    ///    3 (011)   |   3
+    ///    4 (100)   |    2
+    ///    5 (101)  |  3
+    ///    6 (110)   |   0
+    ///    7 (111)   |  3
 
     /// treat them as binary numbers
 
-    ///     |register> = (1/2√2 * |000> + 1/2√2 |001> + 1/2 |010> + 1/2√2 |011>
-    ///                     + 0 * |100> +  -1/2√2 |101> + -1/2 |110> + -1/2√2 |111>)
     /// Once again, these values aren't normalized, so you will have to
     /// normalize them before using them as state amplitudes.
     /// 
@@ -485,8 +477,19 @@ namespace Lab3 {
     /// ## register
     /// A three-qubit register in the |000> state.
     operation Challenge4 (register : Qubit[]) : Unit {
-        // TODO
-        fail "Not implemented.";
+        // Similar idea to challenge 3 --> draw out a tree, depths are powers of 1/sqrt(2)
+
+        H(register[2]);
+        H(register[0]);
+        H(register[1]);
+
+        let A = [0,1,1];
+        let B = [1,0,0];
+        let C = [1,0,1];
+
+        FlipPhase(A, register);
+        FlipPhase(B, register);
+        FlipPhase(C, register);
     }
 }
 

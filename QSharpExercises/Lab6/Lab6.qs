@@ -8,6 +8,8 @@ namespace Lab6 {
     open Microsoft.Quantum.Intrinsic;
     open Microsoft.Quantum.Math;
     open Microsoft.Quantum.Measurement;
+    /// # Summary
+    /// - Why is flipping the <000| nessesary? Shouldn't it be 0 according to the hada matrix
 
 
     /// # Summary
@@ -30,8 +32,11 @@ namespace Lab6 {
     /// classicalBits array.
     operation Exercise1 (classicalBits : Bool[], register : Qubit[]) : Unit
     is Adj {
-        // TODO
-        fail "Not implemented.";
+        for i in 0..Length(register)-1{
+            if(classicalBits[i]){
+                X(register[i]);
+            }
+        }
     }
 
 
@@ -50,8 +55,8 @@ namespace Lab6 {
     /// The target qubit that you must phase-flip if the register is in the
     /// |0...0> state. The target qubit will be provided in the |1> state.
     operation Exercise2 (register : Qubit[], target : Qubit) : Unit {
-        // TODO
-        fail "Not implemented.";
+        mutable test1 = [false, size=Length(register)];
+        ControlledOnBitString(test1, Z)(register, target);
     }
 
 
@@ -104,8 +109,13 @@ namespace Lab6 {
         // then run Exercise1 in Adjoint mode to put the register back into
         // its original state.
 
-        // TODO
-        fail "Not implemented.";
+        Exercise1(originalMessage, candidateEncryptionKey);
+
+        // check encryption key by transforming by original message into encrypted message
+        //and check if encrypted message is equal to encryptedMessage
+        ControlledOnBitString(encryptedMessage, Z)(candidateEncryptionKey, target);
+
+        Adjoint Exercise1(originalMessage, candidateEncryptionKey);
     }
 
 
@@ -134,8 +144,12 @@ namespace Lab6 {
         register : Qubit[],
         target : Qubit
     ) : Unit {
-        // TODO
-        fail "Not implemented.";
+        //implement one iteration
+
+        oracle(register, target);
+        ApplyToEach(H, register);
+        Exercise2(register, target);
+        ApplyToEach(H, register);
     }
 
 
@@ -167,8 +181,25 @@ namespace Lab6 {
         // Grover search - √(2^NumberOfQubits). It's provided here for your
         // convenience.
         let iterations = Round(PowD(2.0, IntAsDouble(numberOfQubits) / 2.0));
+        mutable res = new Bool[0];
+        use register = Qubit[numberOfQubits];
+        ApplyToEach(H, register);
+        
+        use output = Qubit();
+        X(output);
+        //Question: Just to confirm we're essentially using the output qubit as our ancilla qubit, 
+        //and that is the same as our target qubit right?
 
-        // TODO
-        fail "Not implemented.";
+
+        for i in 1..iterations{
+            Exercise4(oracle, register, output);
+        }
+        
+        for i in register{
+            set res += [(M(i) == One ? true | false)];
+        }
+        Reset(output);
+        ResetAll(register);
+        return res;
     }
 }
